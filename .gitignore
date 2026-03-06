@@ -1,39 +1,10 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with Litmus
-*.out
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-natillera-core/.env
-natillera-core/.env.*
-!.env.example
-
-# Go workspace file
-go.work
-go.work.sum
-
-# IDE/Editor folders
+# Global IDE/Editor folders
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS generated files
+# Global OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -41,3 +12,7 @@ go.work.sum
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Go workspace file
+go.work
+go.work.sum
