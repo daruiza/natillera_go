@@ -1,27 +1,31 @@
 services:
-  networks:
-    natillera-network:
-      driver: bridge
-  mongodb:
-    image: mongo:8.0.8
-    container_name: natillera-mongodb
-    restart: unless-stopped
-    environment:
-    - MONGO_INITDB_ROOT_USERNAME=root
-    - MONGO_INITDB_ROOT_PASSWORD=root27017
-    - MONGO_INITDB_DATABASE=test
-    ports:
-      - '27017:27017'
+  app:
+    image: golang:1.24-alpine
+    container_name: natillera-go-app
+    working_dir: /app
     volumes:
-      - natillera-mongodb-volume:/data/db
-      - ./init.js:/docker-entrypoint-initdb.d/init.js:ro
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh natillera-mongodb:27017/test --quiet
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - .:/app
+      - ../natillera-shared:/natillera-shared
+      - go-modules-natillera:/go/pkg/mod
+    ports:
+      - "8080:8080"
+      - "40000:40000"
+    environment:
+      - GO_ENV=dev
+      - DB_URL=mongodb://mongodb:27017/natillera
+    command: >
+      sh -c "go run ./cmd/"
+    tty: true
+    stdin_open: true
     networks:
       - natillera-network
-volumes:
-  natillera-mongodb-volume:
+
+networks:
+  natillera-network:
     external: true
+
+volumes:
+  go-modules-natillera:
+    external: true
+
+#docker exec -it natillera-go-app go mod tidy
