@@ -14,7 +14,7 @@ services:
       - GO_ENV=dev
       - DB_URL=mongodb://mongodb:27017/natillera
     command: >
-      sh -c "go run ./cmd/"
+      sh -c "go mod tidy && go mod download && go run ./cmd/"
     tty: true
     stdin_open: true
     networks:
