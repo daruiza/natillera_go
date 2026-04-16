@@ -11,7 +11,9 @@ import (
 	natsManager "natillera-shared/nats"
 	"natillera-shared/utils"
 	"net/http"
+	"strings"
 
+	"github.com/go-playground/validator"
 	"github.com/google/uuid"
 
 	"golang.org/x/oauth2"
@@ -67,6 +69,33 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(body, &data); err != nil {
 		uh.loggerService.LogError(event+".Unmarshal", traceId, err.Error(), "Failed to Unmarshal body")
 		uh.errorResponse.SendErrorResponse(w, http.StatusBadRequest, err.Error(), event)
+		return
+	}
+
+	errorMessage := make(map[int]string)
+	err = utils.Validate.Struct(data)
+	if err != nil {
+		if _, ok := err.(*validator.InvalidValidationError); ok {
+			errorMessage[0] = err.Error()
+		}
+
+		// Iterar sobre los errores de validación y mostrar mensajes personalizados
+		for i, err := range err.(validator.ValidationErrors) {
+			errorMessage[i+1] = utils.GetCustomErrorMessage(err)
+		}
+	}
+
+	if len(errorMessage) > 0 {
+		var errorMessagesSlice []string
+		//recorremos errorMessage para armar el mensaje de error
+		for _, msg := range errorMessage {
+			utils.Info.Println("Error: ", msg) // Esto sigue imprimiendo cada error individualmente
+			errorMessagesSlice = append(errorMessagesSlice, msg)
+		}
+		// Unimos todos los mensajes de error con ", " como separador
+		fullErrorMessage := strings.Join(errorMessagesSlice, ", ")
+		uh.loggerService.LogError(event+".ValidationError", traceId, fullErrorMessage, "")
+		uh.errorResponse.SendErrorResponse(w, http.StatusBadRequest, fullErrorMessage, event)
 		return
 	}
 
