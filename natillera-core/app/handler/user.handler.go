@@ -89,7 +89,7 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		var errorMessagesSlice []string
 		//recorremos errorMessage para armar el mensaje de error
 		for _, msg := range errorMessage {
-			utils.Info.Println("Error: ", msg) // Esto sigue imprimiendo cada error individualmente
+			utils.Error.Println("Error: ", msg) // Esto sigue imprimiendo cada error individualmente
 			errorMessagesSlice = append(errorMessagesSlice, msg)
 		}
 		// Unimos todos los mensajes de error con ", " como separador
