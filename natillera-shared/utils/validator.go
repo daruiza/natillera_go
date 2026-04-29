@@ -17,6 +17,7 @@ var CustomValidationMessages = map[string]string{
 	"lte":             "El campo %s debe ser menor o igual a %s.",
 	"min":             "El campo %s debe tener al menos %s caracteres.",
 	"max":             "El campo %s debe tener como máximo %s caracteres.",
+	"containsany":     "El campo %s debe contener al menos uno de los siguientes caracteres especiales: %s.",
 	"len":             "El campo %s debe tener exactamente %s caracteres.",
 	"e164":            "El campo %s debe tener un formato de número de teléfono E.164 válido (ej. +573001234567).",
 	"url":             "El campo %s debe ser una URL válida.",
@@ -71,6 +72,8 @@ func GetCustomErrorMessage(err validator.FieldError) string {
 		case "min":
 			return fmt.Sprintf(msg, err.Field(), err.Param())
 		case "max":
+			return fmt.Sprintf(msg, err.Field(), err.Param())
+		case "containsany":
 			return fmt.Sprintf(msg, err.Field(), err.Param())
 		case "len":
 			return fmt.Sprintf(msg, err.Field(), err.Param())

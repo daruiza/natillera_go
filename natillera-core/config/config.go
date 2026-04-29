@@ -52,8 +52,8 @@ func (receiver MicroConfig) Get(env string) string {
 func (receiver MicroConfig) Load(envs ...string) {
 	for _, env := range envs {
 		envValue := receiver.getEnv(env)
-		utils.Debug("loading env " + env + ":" + *envValue)
 		if envValue != nil {
+			utils.Debug("loading env " + env + ":" + *envValue)
 			receiver.data[env] = envValue
 		}
 	}

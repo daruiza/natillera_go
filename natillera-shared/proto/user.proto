@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "./pb_generate_user";
+
+message UserDataPB {
+    string ID = 1;
+    string Email = 2;
+    string Name = 3;
+    string Names = 4;
+    string Lastnames = 5;
+    string Phone = 6;
+    string Theme = 7;    
+    string Photo = 8;
+    string Password = 9;
+    string RolId = 10;
+    string CreatedAt = 11;
+    string UpdatedAt = 12;
+    RolPB Rol = 13;  
+}
+
+message RolPB {
+    string ID = 1;
+    string Name = 2;
+    string Description = 3;
+    string CreatedAt = 4;
+    string UpdatedAt = 5;
+    repeated OptionPB Options = 6;
+    repeated OptionsRolPB OptionsRol = 7;
+}
+
+message OptionPB {
+    string Name = 1;
+    string Description = 2;
+}
+
+message OptionsRolPB {
+    string RolId = 1;
+    OptionPB Option = 2;
+}

@@ -15,7 +15,9 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -99,7 +101,45 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uh.loggerService.LogInfo(event, traceId, "", "")
+	filter := bson.M{"email": data.Email}
+
+	users, err := uh.repo.GetUsers(&filter)
+	if err != nil {
+		uh.loggerService.LogError(event+".GetUsers", traceId, err.Error(), "")
+		uh.errorResponse.SendErrorResponse(w, http.StatusBadRequest, err.Error(), event)
+		return
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte((*users)[0].Password), []byte(data.Password)); err != nil {
+		uh.loggerService.LogError(event+".InvalidCredentials", traceId, err.Error(), "Invalid Credentials")
+		uh.errorResponse.SendErrorResponse(w, http.StatusBadRequest, err.Error(), event+"Invalid Credentials")
+		return
+	}
+
+	// Generar token
+	token, err := utils.GenerateToken((*users)[0].ID, (*users)[0].Name, (*users)[0].Email, (*users)[0].RolId)
+	if err != nil {
+		http.Error(w, "Error al generar token", http.StatusInternalServerError)
+		return
+	}
+
+	utils.Info.Printf("Enviando mensaje a NATS: %s", "natillera.login.user")
+	uh.natsService.EventSender.SendMsgPB("natillera.login.user", (*users)[0].ToProtocolBuffer())
+
+	// Respuesta
+	response := map[string]interface{}{
+		"message": "Login exitoso",
+		"token":   token,
+		"user":    (*users)[0],
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		uh.loggerService.LogError(event+".EncodeResponse", traceId, err.Error(), "Failed to encode JSON")
+		uh.errorResponse.SendErrorResponse(w, http.StatusInternalServerError, "Failed to encode response", event)
+		return
+	}
 }
 
 func (uh *UserHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
