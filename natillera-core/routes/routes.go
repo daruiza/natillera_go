@@ -57,6 +57,7 @@ func SetupChiRoutes(r *chi.Mux, cnf *config.MicroConfig) {
 			r.Post("/login", userHandler.Login)
 			r.Post("/google", userHandler.GoogleLogin)
 			r.Get("/google/callback", userHandler.GoogleCallback)
+			r.Post("/google/validate", userHandler.ValidateGoogleToken)
 		})
 	})
 

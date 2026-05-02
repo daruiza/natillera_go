@@ -18,3 +18,7 @@ type GoogleUserInfo struct {
 	FamilyName    string `json:"family_name"`
 	Picture       string `json:"picture"`
 }
+
+type GoogleTokenRequest struct {
+	Token string `json:"token" validate:"required"`
+}

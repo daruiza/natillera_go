@@ -38,6 +38,7 @@ func LoadConfig() MicroConfig {
 		"OAUTH_CLIENT_ID",
 		"OAUTH_CLIENT_SECRET",
 		"OAUTH_REDIRECT_URL",
+		"ANROID_OAUTH_CLIENT_ID",
 	)
 }
 

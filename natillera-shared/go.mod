@@ -1,6 +1,6 @@
 module natillera-shared
 
-go 1.24.2
+go 1.25.0
 
 require (
 	github.com/go-playground/validator v9.31.0+incompatible
