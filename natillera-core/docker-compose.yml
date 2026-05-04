@@ -1,6 +1,6 @@
 services:
   app:
-    image: golang:1.24-alpine
+    image: golang:1.25-alpine
     container_name: natillera-go-app
     working_dir: /app
     volumes:
